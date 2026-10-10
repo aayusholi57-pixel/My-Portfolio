@@ -1,28 +1,40 @@
 # Aayush Oli — Portfolio
 
-Personal portfolio website for **Aayush Oli**, aspiring AI/ML Engineer.
+Personal portfolio website and project CMS for **Aayush Oli**, aspiring AI/ML Engineer.
 
-**Domain:** https://aayusholi.com.np  
-**GitHub:** https://github.com/aayusholi57-pixel
+- **Website:** https://aayusholi.com.np
+- **Admin:** https://aayusholi.com.np/admin.html
+- **GitHub:** https://github.com/aayusholi57-pixel
+- **Hosting:** Render Static Site, deployed from `main`
 
-## Highlights
-- Responsive, accessible single-page portfolio
-- Featured machine learning and computer vision projects
-- Skills, about, and contact sections
-- SEO and social sharing metadata
-- No build step or JavaScript framework required
+## Features
+- Responsive static portfolio with project, about, skills, and contact sections.
+- Optional database-driven featured projects using Supabase.
+- Admin UI with Google OAuth sign-in.
+- Supabase Row Level Security (RLS) for public read-only published content and admin-only writes.
+- No server-side application required for the static site.
+
+## Configure the admin CMS
+Follow [SUPABASE-SETUP.md](SUPABASE-SETUP.md) in order. In short:
+1. Create a Supabase project and enable Google authentication.
+2. Run [SUPABASE-SETUP.sql](SUPABASE-SETUP.sql) after replacing `YOUR_GOOGLE_EMAIL` with your exact admin Google email.
+3. Configure [admin-config.js](admin-config.js) with your Supabase project URL, publishable/anon key, and the same email.
+4. Commit the configuration so Render deploys it.
+5. Visit `/admin.html` and sign in with the authorized Google account.
+
+The browser key is a public publishable/anon key, not a secret. Never put a Supabase service-role key in this repository. Security is enforced by database RLS policies.
 
 ## Run locally
-Open `index.html` in a browser, or run a local static server:
+From this folder:
 
 ```bash
 python -m http.server 8080
 ```
 
-Then visit http://localhost:8080.
+Then visit http://localhost:8080. OAuth redirects must be configured for the local URL if testing Google sign-in locally.
 
 ## Deployment
-This is a static website and can be deployed through Render Static Sites or GitHub Pages. Configure the custom domain in the hosting dashboard and add the DNS records supplied by the provider. Do not change DNS records until the host has provided the exact values.
+Render builds this repository's `main` branch as a static site using `echo 'Static portfolio ready to publish'` and publishes `.`. Changes committed to `main` trigger automatic deployment.
 
-## Keep project claims accurate
-Update project descriptions and add live demo/API links only after verifying that the service is publicly accessible. Model metrics should be quoted from evaluation reports and should identify the dataset and split.
+## Project claim accuracy
+Keep project descriptions and live-demo links accurate. Add live links only after verifying the service is publicly accessible. Report model metrics from the corresponding evaluation split and do not overstate results.
