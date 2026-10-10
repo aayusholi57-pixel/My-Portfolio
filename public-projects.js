@@ -23,5 +23,6 @@
    article.append(links);frag.append(article);
   });
   root.replaceChildren(frag);
+  window.dispatchEvent(new CustomEvent("portfolio-projects-updated"));
  }catch(e){console.warn('Portfolio CMS unavailable; showing static projects.',e)}
 })();
