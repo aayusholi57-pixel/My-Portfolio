@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0b0d12">
+<title>Portfolio Admin — Aayush Oli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0b0d12;--panel:#11141c;--text:#f4f5f7;--muted:#9da5b4;--line:#252a36;--lime:#c7f36b;--red:#ff8f8f}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px Manrope,system-ui,sans-serif;line-height:1.5}a{color:var(--lime);text-decoration:none}.wrap{max-width:1100px;width:calc(100% - 32px);margin:auto}header{border-bottom:1px solid var(--line);padding:18px 0}.bar{display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{font-weight:800;font-size:19px}.brand span{color:var(--lime)}.eyebrow{font:12px 'DM Mono',monospace;letter-spacing:.12em;color:var(--lime);text-transform:uppercase}main{padding:36px 0 70px}h1{font-size:clamp(30px,5vw,44px);letter-spacing:-.06em;margin:8px 0}h2{font-size:20px;margin:0 0 18px}.muted{color:var(--muted)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;margin-top:20px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:grid;gap:7px}.field.full{grid-column:1/-1}label{font-size:12px;color:#c5cad5}input,textarea{width:100%;background:#0b0d12;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:12px;font:inherit}textarea{min-height:90px;resize:vertical}button,.btn{border:1px solid var(--line);border-radius:8px;padding:11px 15px;font:700 13px Manrope,system-ui;cursor:pointer;background:#171b25;color:var(--text);display:inline-flex;align-items:center;justify-content:center;gap:8px}button.primary{background:var(--lime);color:#11140b;border-color:var(--lime)}button.danger{color:var(--red)}button:disabled{opacity:.5;cursor:wait}.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.hidden{display:none!important}.notice{padding:12px 14px;border:1px solid var(--line);border-radius:8px;color:var(--muted);white-space:pre-wrap}.notice.error{border-color:#693838;color:#ffb0b0}.notice.ok{border-color:#526b2e;color:var(--lime)}.project-list{display:grid;gap:10px}.project{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px;border:1px solid var(--line);border-radius:9px}.project p{margin:4px 0 0;color:var(--muted);font-size:12px;overflow-wrap:anywhere}.project strong{display:block}.pill{font:11px 'DM Mono',monospace;color:var(--muted)}footer{padding:22px 0;color:var(--muted);font-size:12px}@media(max-width:650px){.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:17px}.project{align-items:flex-start;flex-direction:column}.bar{align-items:flex-start;flex-direction:column}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./admin-config.js"></script>
+</head>
+<body>
+<header><div class="wrap bar"><a class="brand" href="./">AO<span>.</span> <span style="color:#9da5b4;font-size:12px;font-weight:500">/ ADMIN</span></a><div class="row"><a href="./">View website ↗</a><button id="signout" class="hidden">Sign out</button></div></div></header>
+<main class="wrap"><div class="eyebrow">Private workspace</div><h1>Portfolio management</h1><p class="muted">Manage featured projects from one dashboard. Changes are saved to your Supabase database.</p>
+<div id="notice" class="notice" role="status" aria-live="polite">Checking configuration…</div>
+<section id="login-panel" class="panel hidden"><h2>Sign in to continue</h2><p class="muted">Use the Google account authorized as the portfolio administrator.</p><button id="google-login" class="primary">Continue with Google ↗</button></section>
+<div id="dashboard" class="hidden">
+<section class="panel"><div class="row" style="justify-content:space-between"><div><h2>Featured projects</h2><p class="muted">Add or edit a project, or remove one from the live portfolio.</p></div><button id="new-project" class="primary">+ New project</button></div><div id="projects" class="project-list"></div></section>
+<section class="panel" id="editor-panel"><h2 id="editor-title">Add a project</h2><form id="project-form"><input type="hidden" id="project-id"><div class="grid">
+<div class="field"><label for="title">Project title *</label><input id="title" maxlength="100" required></div>
+<div class="field"><label for="icon">Icon (emoji or short symbol)</label><input id="icon" maxlength="8" value="✦"></div>
+<div class="field full"><label for="description">Description *</label><textarea id="description" maxlength="600" required></textarea></div>
+<div class="field full"><label for="tags">Technology tags (comma separated)</label><input id="tags" placeholder="Python, PyTorch, FastAPI"></div>
+<div class="field"><label for="repo_url">Repository URL</label><input id="repo_url" type="url" placeholder="https://github.com/..."></div>
+<div class="field"><label for="demo_url">Live demo URL (optional)</label><input id="demo_url" type="url" placeholder="https://..."></div>
+<div class="field"><label for="sort_order">Display order</label><input id="sort_order" type="number" min="0" max="999" value="10" required></div>
+<div class="field"><label for="published">Publication</label><div class="row"><input id="published" type="checkbox" checked style="width:auto"><label for="published">Show on public website</label></div></div>
+</div><div class="row" style="margin-top:16px"><button class="primary" type="submit" id="save-project">Save project</button><button type="button" id="cancel-edit">Cancel</button></div></form></section>
+</div>
+</main><footer><div class="wrap">Admin page is not indexed by search engines. Security is enforced by Supabase authentication and database policies, not by this page being hidden.</div></footer>
+<script>
+(() => {
+ const cfg = window.PORTFOLIO_ADMIN_CONFIG || {};
+ const notice = document.getElementById('notice');
+ const loginPanel = document.getElementById('login-panel');
+ const dashboard = document.getElementById('dashboard');
+ const signout = document.getElementById('signout');
+ const setNotice=(msg,kind='')=>{notice.textContent=msg;notice.className='notice '+kind;};
+ if(!window.supabase || !cfg.url || !cfg.anonKey || !cfg.adminEmail || cfg.url.includes('YOUR_') || cfg.anonKey.includes('YOUR_') || cfg.adminEmail.includes('YOUR_')){
+   setNotice('Setup required: configure admin-config.js with your Supabase project URL, publishable/anon key, and exact Google admin email. Then follow SUPABASE-SETUP.md. Do not put a service-role key in this file.','error'); return;
+ }
+ const client=window.supabase.createClient(cfg.url,cfg.anonKey);
+ let currentUser=null;
+ const $=id=>document.getElementById(id);
+ const safeUrl=value=>{if(!value)return '';try{const u=new URL(value);return ['https:','http:'].includes(u.protocol)?u.href:''}catch{return ''}};
+ async function boot(){
+   const {data:{session},error}=await client.auth.getSession();
+   if(error){setNotice(error.message,'error');return}
+   if(session) await acceptSession(session); else {loginPanel.classList.remove('hidden');setNotice('Sign in with the authorized Google account.');}
+ }
+ async function acceptSession(session){
+   const email=(session.user.email||'').toLowerCase();
+   if(email!==cfg.adminEmail.toLowerCase()){
+     await client.auth.signOut(); loginPanel.classList.remove('hidden');dashboard.classList.add('hidden');signout.classList.add('hidden');
+     setNotice('Access denied: '+email+' is not the configured admin account. Sign in with the authorized Google account.','error');return;
+   }
+   currentUser=session.user;loginPanel.classList.add('hidden');dashboard.classList.remove('hidden');signout.classList.remove('hidden');
+   setNotice('Signed in as '+email+'.','ok');await loadProjects();
+ }
+ $('google-login').addEventListener('click',async()=>{
+   const redirectTo=location.origin+location.pathname;
+   const {error}=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo,queryParams:{prompt:'select_account'}}});
+   if(error)setNotice(error.message,'error');
+ });
+ signout.addEventListener('click',async()=>{await client.auth.signOut();location.reload()});
+ client.auth.onAuthStateChange((_event,session)=>{if(session) setTimeout(()=>acceptSession(session),0)});
+ function resetForm(){ $('project-form').reset();$('project-id').value='';$('icon').value='✦';$('sort_order').value='10';$('published').checked=true;$('editor-title').textContent='Add a project';}
+ function formValues(){return {title:$('title').value.trim(),icon:$('icon').value.trim()||'✦',description:$('description').value.trim(),tags:$('tags').value.split(',').map(s=>s.trim()).filter(Boolean).slice(0,12),repo_url:safeUrl($('repo_url').value.trim()),demo_url:safeUrl($('demo_url').value.trim())||null,sort_order:Number($('sort_order').value)||0,published:$('published').checked,updated_at:new Date().toISOString()};}
+ async function loadProjects(){
+   const {data,error}=await client.from('portfolio_projects').select('*').order('sort_order').order('created_at');
+   if(error){setNotice('Could not load projects. Check that you ran SUPABASE-SETUP.sql and configured Google sign-in. '+error.message,'error');return}
+   const root=$('projects');root.replaceChildren();
+   if(!data.length){const p=document.createElement('p');p.className='muted';p.textContent='No projects in the CMS yet. Add your first project below.';root.append(p);}
+   data.forEach(project=>{
+     const item=document.createElement('article');item.className='project';
+     const info=document.createElement('div');const title=document.createElement('strong');title.textContent=(project.icon||'✦')+' '+project.title;
+     const detail=document.createElement('p');detail.textContent=(project.published?'Published':'Draft')+' · '+(project.tags||[]).join(', ');
+     info.append(title,detail);const actions=document.createElement('div');actions.className='row';
+     const edit=document.createElement('button');edit.textContent='Edit';edit.addEventListener('click',()=>editProject(project));
+     const del=document.createElement('button');del.className='danger';del.textContent='Delete';del.addEventListener('click',()=>deleteProject(project));
+     actions.append(edit,del);item.append(info,actions);root.append(item);
+   });
+ }
+ function editProject(p){$('project-id').value=p.id;$('title').value=p.title;$('icon').value=p.icon||'✦';$('description').value=p.description;$('tags').value=(p.tags||[]).join(', ');$('repo_url').value=p.repo_url||'';$('demo_url').value=p.demo_url||'';$('sort_order').value=p.sort_order??10;$('published').checked=!!p.published;$('editor-title').textContent='Edit project';$('editor-panel').scrollIntoView({behavior:'smooth'});}
+ async function deleteProject(p){if(!confirm('Delete "'+p.title+'"? This cannot be undone.'))return;const {error}=await client.from('portfolio_projects').delete().eq('id',p.id);if(error)setNotice(error.message,'error');else{setNotice('Project deleted.','ok');await loadProjects();}}
+ $('new-project').addEventListener('click',()=>{resetForm();$('editor-panel').scrollIntoView({behavior:'smooth'})});
+ $('cancel-edit').addEventListener('click',resetForm);
+ $('project-form').addEventListener('submit',async e=>{e.preventDefault();if(!currentUser){setNotice('Please sign in again.','error');return}
+ const payload=formValues();if(!payload.title||!payload.description){setNotice('Title and description are required.','error');return}
+ if($('repo_url').value.trim()&&!payload.repo_url){setNotice('Repository URL must be a valid HTTP(S) URL.','error');return}
+ if($('demo_url').value.trim()&&!payload.demo_url){setNotice('Demo URL must be a valid HTTP(S) URL.','error');return}
+ const id=$('project-id').value;const button=$('save-project');button.disabled=true;
+ try{const result=id?await client.from('portfolio_projects').update(payload).eq('id',id).select().single():await client.from('portfolio_projects').insert({...payload,created_by:currentUser.id}).select().single();
+ if(result.error)throw result.error;setNotice('Project saved to the CMS. Public-site syncing is enabled when the site has Supabase config.','ok');resetForm();await loadProjects();
+ }catch(err){setNotice('Could not save project: '+(err.message||String(err)),'error')}finally{button.disabled=false}
+ });
+ boot();
+})();
+</script></body></html>
